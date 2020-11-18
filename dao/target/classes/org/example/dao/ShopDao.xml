@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.ShopDao">
+    <select id="query" resultType="org.example.pojo.Shop">
+        select id,goodname,price,amount,photourl from shop
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(id) from shop
+    </select>
+
+    <select id="search" resultType="org.example.pojo.Shop">
+        select id,goodname,price,amount,photourl from shop where goodname like concat('%',#{goodname},'%')
+    </select>
+
+    <select id="searchCount" resultType="java.lang.Integer">
+        select count(id) from shop where goodname like concat('%',#{goodname},'%')
+    </select>
+
+    <delete id="deleteShop">
+        delete from shop where id=#{id}
+    </delete>
+
+    <update id="updateShop">
+        update shop set goodname=#{goodname},price=#{price},amount=#{amount} where id=#{id}
+    </update>
+
+    <insert id="addShop">
+        insert into shop(goodname,price,amount) values (null ,null ,null )
+    </insert>
+
+    <delete id="deleteAll">
+        delete from shop where id=#{id}
+    </delete>
+
+    <update id="addPhoto">
+        update shop set photourl=#{photourl} where id=#{id}
+    </update>
+</mapper>

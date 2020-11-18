@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.alibaba.com/schema/stat http://www.alibaba.com/schema/stat.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:property-placeholder location="classpath:Jdbc.properties"/>
+    <!--创建数据库连接池对象-->
+    <bean id="myDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.max}"/>
+    </bean>
+
+    <!--通过数据库连接池对象和mybatis配置文件创建sqlSession工厂-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="myDataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+    <!--通过sqlSession工厂和要扫描的dao包创建映射扫描mapper文件-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="org.example.dao"/>
+    </bean>
+
+    <!--创建service层的实现类对象-->
+    <bean id="userServiceImpl" class="org.example.service.Impl.UserServiceImpl">
+        <property name="ud" ref="userDao"/>
+    </bean>
+
+    <bean id="shopServiceImpl" class="org.example.service.Impl.ShopServiceImpl">
+        <property name="sd" ref="shopDao"/>
+    </bean>
+    <!--使用spring的事务管理器-->
+    <!--声明事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="myDataSource"/>
+    </bean>
+
+    <!--开启事务注解驱动-->
+    <!--transaction-manager:事务管理器对象的id-->
+     <tx:annotation-driven transaction-manager="transactionManager"/>
+    <context:component-scan base-package="org.example.service"/>
+    <aop:aspectj-autoproxy/>
+</beans>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="org.example.servlet"/>
+    <!--配置我们自定义的日期转换器-->
+    <bean name="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    </bean>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--配置一个处理文件上传的对象,name的名字一定不能乱写-->
+    <bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--限制上传文件的大小，单位是字节,比如，最大文件不能超过5MB-->
+        <!--        <property name="maxUploadSize" value="5242848"/>-->
+    </bean>
+    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter" >
+                <property name="supportedMediaTypes" value="application/json;charset=UTF-8"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--加载最新版映射器和适合器-->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <!--默认情况下，/,springmvc会拦截所有,除了jsp文件，允许静态资料访问-->
+
+</beans>
